@@ -31,7 +31,7 @@
 </script>
 
 <main>
-  <h1>money-face-app</h1>
+  <h1>💲Money Face💲</h1>
 
   {#if originalImage}
     <DraftingBoard
