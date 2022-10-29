@@ -17,17 +17,16 @@
     originalImage = e.detail;
   };
 
-  onMount(() => {
+  if (import.meta.env.VITE_FIXED_IMAGE) {
     // dev cheat
-    let devImage = import.meta.env.VITE_FIXED_IMAGE;
-    if (devImage) {
+    onMount(() => {
       const image = new Image();
-      image.src = `dev-image/${devImage}`;
+      image.src = `dev-image/${import.meta.env.VITE_FIXED_IMAGE}`;
       image.onload = () => {
         originalImage = image;
       };
-    }
-  });
+    });
+  }
 </script>
 
 <main>
