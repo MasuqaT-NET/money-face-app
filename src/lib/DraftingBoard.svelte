@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { FaceLandmarksDetector } from "@tensorflow-models/face-landmarks-detection";
   import { onMount } from "svelte";
-  import type { CurrencySign } from "../constants";
+  import type { CurrencySign, Point2d } from "../constants";
 
   export let detector: FaceLandmarksDetector;
   export let originalImage: HTMLImageElement;
@@ -10,23 +10,36 @@
 
   let canvas: HTMLCanvasElement;
 
+  let facesPartCenters: {
+    leftEye?: Point2d;
+    rightEye?: Point2d;
+    lips?: Point2d;
+  }[];
+
   let svgHolder: HTMLElement;
   const fetchSign = async (sign: CurrencySign) => {
     const res = await fetch(`/currency-signs/${sign}.svg`);
     svgHolder.innerHTML = await res.text();
 
-    reset();
+    render();
   };
 
   $: {
     // runs on...
     // noinspection JSUnusedAssignment
     originalImage;
+
+    // noinspection JSUnusedAssignment
+    analyze().then(() => render());
+  }
+
+  $: {
+    // runs on...
     // noinspection JSUnusedAssignment
     color;
 
     // noinspection JSUnusedAssignment
-    reset();
+    render();
   }
 
   $: {
@@ -35,20 +48,28 @@
   }
 
   onMount(() => {
-    reset();
+    analyze().then(() => render());
   });
 
-  // FIXME: 瞳の角度を考慮する
-  const centerOf = (points: { x: number; y: number }[]) => {
-    const xMin = Math.min(...points.map((p) => p.x));
-    const xMax = Math.max(...points.map((p) => p.x));
-    const yMin = Math.min(...points.map((p) => p.y));
-    const yMax = Math.max(...points.map((p) => p.y));
+  const analyze = async () => {
+    facesPartCenters = [];
+    const estimation = await detector.estimateFaces(originalImage);
+    for (const face of estimation) {
+      const leftEyePoints = face.keypoints.filter((x) => x.name === "leftEye");
+      const rightEyePoints = face.keypoints.filter(
+        (x) => x.name === "rightEye"
+      );
+      const lipsPoints = face.keypoints.filter((x) => x.name === "lips");
 
-    return { x: xMin + (xMax - xMin) / 2, y: yMin + (yMax - yMin) / 2 };
+      facesPartCenters.push({
+        leftEye: centerOf(leftEyePoints),
+        rightEye: centerOf(rightEyePoints),
+        lips: centerOf(lipsPoints),
+      });
+    }
   };
 
-  const reset = async () => {
+  const render = () => {
     if (!canvas) {
       return;
     }
@@ -57,6 +78,7 @@
     canvas.height = originalImage.height;
 
     const context = canvas.getContext("2d");
+    context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(originalImage, 0, 0);
 
     const signSvg = svgHolder.querySelector("svg");
@@ -82,23 +104,21 @@
       );
     };
 
-    const estimation = await detector.estimateFaces(originalImage);
-    for (const face of estimation) {
-      const leftEyePoints = face.keypoints.filter((x) => x.name === "leftEye");
-      const rightEyePoints = face.keypoints.filter(
-        (x) => x.name === "rightEye"
-      );
-      const lipsPoints = face.keypoints.filter((x) => x.name === "lips");
-
-      const leftEyeBox = centerOf(leftEyePoints);
-      drawSignAt(leftEyeBox);
-
-      const rightEyeBox = centerOf(rightEyePoints);
-      drawSignAt(rightEyeBox);
-
-      const lipsBox = centerOf(lipsPoints);
-      drawSignAt(lipsBox);
+    for (const partCenters of facesPartCenters) {
+      drawSignAt(partCenters.leftEye);
+      drawSignAt(partCenters.rightEye);
+      drawSignAt(partCenters.lips);
     }
+  };
+
+  // FIXME: 瞳の角度を考慮する
+  const centerOf = (points: { x: number; y: number }[]) => {
+    const xMin = Math.min(...points.map((p) => p.x));
+    const xMax = Math.max(...points.map((p) => p.x));
+    const yMin = Math.min(...points.map((p) => p.y));
+    const yMax = Math.max(...points.map((p) => p.y));
+
+    return { x: xMin + (xMax - xMin) / 2, y: yMin + (yMax - yMin) / 2 };
   };
 </script>
 
