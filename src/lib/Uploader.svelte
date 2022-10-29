@@ -9,10 +9,10 @@
     const reader = new FileReader();
     reader.onloadend = (e) => {
       const image = new Image();
+      image.src = e.target.result.toString();
       image.onload = () => {
         dispatch("loaded", image);
       };
-      image.src = e.target.result.toString();
     };
     reader.readAsDataURL(e.currentTarget.files[0]);
   };
