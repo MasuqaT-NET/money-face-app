@@ -5,7 +5,18 @@
   export let detector: FaceLandmarksDetector;
   export let originalImage: HTMLImageElement;
 
+  type CurrencySign = "BTC" | "EUR" | "JPY" | "USD";
+
   let canvas: HTMLCanvasElement;
+  let currencySign: CurrencySign = "JPY";
+
+  let svgHolder: HTMLElement;
+  const fetchSign = async (sign: CurrencySign) => {
+    const res = await fetch(`/currency-signs/${sign}.svg`);
+    svgHolder.innerHTML = await res.text();
+
+    reset();
+  };
 
   $: {
     // runs on...
@@ -16,18 +27,22 @@
     reset();
   }
 
+  $: {
+    fetchSign(currencySign);
+  }
+
   onMount(() => {
     reset();
   });
 
   // FIXME: 瞳の角度を考慮する
-  const getBoundingBox = (points: { x: number; y: number }[]) => {
-    const x = Math.min(...points.map((p) => p.x));
-    const width = Math.max(...points.map((p) => p.x)) - x;
-    const y = Math.min(...points.map((p) => p.y));
-    const height = Math.max(...points.map((p) => p.y)) - y;
+  const centerOf = (points: { x: number; y: number }[]) => {
+    const xMin = Math.min(...points.map((p) => p.x));
+    const xMax = Math.max(...points.map((p) => p.x));
+    const yMin = Math.min(...points.map((p) => p.y));
+    const yMax = Math.max(...points.map((p) => p.y));
 
-    return { x, y, width, height };
+    return { x: xMin + (xMax - xMin) / 2, y: yMin + (yMax - yMin) / 2 };
   };
 
   const reset = async () => {
@@ -40,7 +55,28 @@
 
     const context = canvas.getContext("2d");
     context.drawImage(originalImage, 0, 0);
-    context.fillStyle = "green";
+
+    const signSvg = svgHolder.querySelector("svg");
+    const signPath = new Path2D(
+      svgHolder.querySelector("path").getAttribute("d")
+    );
+
+    const drawSignAt = (targetCenter: { x: number; y: number }) => {
+      const signSize = {
+        width: +signSvg.getAttribute("width"),
+        height: +signSvg.getAttribute("height"),
+      };
+
+      context.translate(
+        targetCenter.x - signSize.width / 2,
+        targetCenter.y - signSize.height / 2
+      );
+      context.fill(signPath);
+      context.translate(
+        -(targetCenter.x - signSize.width / 2),
+        -(targetCenter.y - signSize.height / 2)
+      );
+    };
 
     const estimation = await detector.estimateFaces(originalImage);
     for (const face of estimation) {
@@ -50,26 +86,19 @@
       );
       const lipsPoints = face.keypoints.filter((x) => x.name === "lips");
 
-      const leftEyeBox = getBoundingBox(leftEyePoints);
-      context.fillRect(
-        leftEyeBox.x,
-        leftEyeBox.y,
-        leftEyeBox.width,
-        leftEyeBox.height
-      );
+      const leftEyeBox = centerOf(leftEyePoints);
+      drawSignAt(leftEyeBox);
 
-      const rightEyeBox = getBoundingBox(rightEyePoints);
-      context.fillRect(
-        rightEyeBox.x,
-        rightEyeBox.y,
-        rightEyeBox.width,
-        rightEyeBox.height
-      );
+      const rightEyeBox = centerOf(rightEyePoints);
+      drawSignAt(rightEyeBox);
 
-      const lipsBox = getBoundingBox(lipsPoints);
-      context.fillRect(lipsBox.x, lipsBox.y, lipsBox.width, lipsBox.height);
+      const lipsBox = centerOf(lipsPoints);
+      drawSignAt(lipsBox);
     }
   };
 </script>
 
-<canvas bind:this={canvas} style="width: 75vw" />
+<div>
+  <canvas bind:this={canvas} />
+  <div bind:this={svgHolder} style="display: none" />
+</div>
