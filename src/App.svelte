@@ -33,25 +33,31 @@
 <main>
   <h1>💲Money Face💲</h1>
 
+  <Uploader on:loaded={loaded} />
+
   {#if originalImage}
     <DraftingBoard
       {detector}
       {originalImage}
       sign={{ currency, color: signColor, size: signSize }}
-      {signColor}
     />
   {/if}
 
-  <select bind:value={currency}>
-    {#each currencies as c}
-      <option value={c}>{c}</option>
-    {/each}
-  </select>
+  <fieldset>
+    <legend>Sign</legend>
 
-  <input type="color" bind:value={signColor} />
+    <label for="currency">Currency</label>
+    <select id="currency" bind:value={currency}>
+      {#each currencies as c}
+        <option value={c}>{c}</option>
+      {/each}
+    </select>
 
-  <input type="range" bind:value={signSize} min="8" step="1" />
-  {signSize}px
+    <label for="color">Color</label>
+    <input type="color" id="color" bind:value={signColor} />
 
-  <Uploader on:loaded={loaded} />
+    <label for="size">Size</label>
+    <input type="range" id="size" bind:value={signSize} min="8" step="1" />
+    {signSize}px
+  </fieldset>
 </main>

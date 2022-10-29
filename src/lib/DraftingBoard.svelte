@@ -100,7 +100,9 @@
 </script>
 
 <div>
-  <canvas bind:this={canvas} />
+  <div>
+    <canvas bind:this={canvas} style="max-width: 1280px" />
+    <div bind:this={svgHolder} style="display: none" />
+  </div>
   <button on:click={handleShareClick}>Share</button>
-  <div bind:this={svgHolder} style="display: none" />
 </div>
