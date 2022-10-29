@@ -54,6 +54,7 @@
   const analyze = async () => {
     facesPartCenters = [];
     const estimation = await detector.estimateFaces(originalImage);
+    console.log(estimation);
     for (const face of estimation) {
       const leftEyePoints = face.keypoints.filter((x) => x.name === "leftEye");
       const rightEyePoints = face.keypoints.filter(
@@ -70,7 +71,8 @@
   };
 
   const render = () => {
-    if (!canvas) {
+    const pathElement = svgHolder?.querySelector("path");
+    if (!canvas || !pathElement) {
       return;
     }
 
@@ -82,9 +84,7 @@
     context.drawImage(originalImage, 0, 0);
 
     const signSvg = svgHolder.querySelector("svg");
-    const signPath = new Path2D(
-      svgHolder.querySelector("path").getAttribute("d")
-    );
+    const signPath = new Path2D(pathElement.getAttribute("d"));
 
     const drawSignAt = (targetCenter: { x: number; y: number }) => {
       const signSize = {
