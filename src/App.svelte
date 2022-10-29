@@ -11,6 +11,7 @@
 
   let originalImage: HTMLImageElement | null;
   let currentSign: CurrencySign = "JPY";
+  let color = "#000000";
 
   const loaded = (e: CustomEvent<HTMLImageElement>) => {
     originalImage = e.detail;
@@ -33,7 +34,7 @@
   <h1>money-face-app</h1>
 
   {#if originalImage}
-    <DraftingBoard {detector} {originalImage} sign={currentSign} />
+    <DraftingBoard {detector} {originalImage} sign={currentSign} {color} />
   {/if}
 
   <select bind:value={currentSign}>
@@ -41,6 +42,8 @@
       <option value={sign}>{sign}</option>
     {/each}
   </select>
+
+  <input type="color" bind:value={color} />
 
   <Uploader on:loaded={loaded} />
 </main>

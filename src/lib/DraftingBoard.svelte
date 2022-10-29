@@ -6,6 +6,7 @@
   export let detector: FaceLandmarksDetector;
   export let originalImage: HTMLImageElement;
   export let sign: CurrencySign;
+  export let color: string;
 
   let canvas: HTMLCanvasElement;
 
@@ -21,6 +22,8 @@
     // runs on...
     // noinspection JSUnusedAssignment
     originalImage;
+    // noinspection JSUnusedAssignment
+    color;
 
     // noinspection JSUnusedAssignment
     reset();
@@ -71,6 +74,7 @@
         targetCenter.x - signSize.width / 2,
         targetCenter.y - signSize.height / 2
       );
+      context.fillStyle = color;
       context.fill(signPath);
       context.translate(
         -(targetCenter.x - signSize.width / 2),
