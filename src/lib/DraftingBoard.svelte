@@ -92,6 +92,7 @@
       const shareImage = new File([blob], "share.png", { type: "image/png" });
 
       navigator.share({
+        text: "#MoneyFace",
         files: [shareImage],
       });
     });
