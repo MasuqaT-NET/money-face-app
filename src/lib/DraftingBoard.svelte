@@ -1,14 +1,13 @@
 <script lang="ts">
   import type { FaceLandmarksDetector } from "@tensorflow-models/face-landmarks-detection";
   import { onMount } from "svelte";
-  import type { CurrencySign } from "../constants";
+  import type { Currency } from "../constants";
   import type { FacePartCenters } from "./drawing-helpers";
   import { detectFacesPartsCenters, drawSignAt } from "./drawing-helpers";
 
   export let detector: FaceLandmarksDetector;
   export let originalImage: HTMLImageElement;
-  export let sign: CurrencySign;
-  export let color: string;
+  export let sign: { currency: Currency; color: string; size: number };
 
   let canvas: HTMLCanvasElement;
 
@@ -28,7 +27,7 @@
   $: {
     // runs on...
     // noinspection JSUnusedAssignment
-    color;
+    sign.color;
 
     // noinspection JSUnusedAssignment
     render();
@@ -36,7 +35,7 @@
 
   $: {
     // noinspection JSUnusedAssignment
-    fetch(`/currency-signs/${sign}.svg`)
+    fetch(`/currency-signs/${sign.currency}.svg`)
       .then((res) => res.text())
       .then((text) => {
         svgHolder.innerHTML = text;
