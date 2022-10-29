@@ -11,6 +11,9 @@
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.1.0",
+    "@tensorflow-models/face-landmarks-detection": "^1.0.2",
+    "@tensorflow/tfjs": "^4.0.0",
+    "@tensorflow/tfjs-backend-wasm": "^4.0.0",
     "@tsconfig/svelte": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",

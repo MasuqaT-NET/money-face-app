@@ -7,7 +7,6 @@ module.exports = {
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "prettier",
   ],
   parser: "@typescript-eslint/parser",
@@ -22,11 +21,7 @@ module.exports = {
   settings: {
     "svelte3/typescript": true,
   },
-  globals: {
-    Image: "readonly",
-  },
-  rules: {
-    "@typescript-eslint/no-unsafe-assignment": "off",
-    "@typescript-eslint/no-unsafe-member-access": "off",
+  env: {
+    browser: true,
   },
 };

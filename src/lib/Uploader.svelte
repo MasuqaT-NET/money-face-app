@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
 
-  const dispatch = createEventDispatcher<{ loaded: Image }>();
+  const dispatch = createEventDispatcher<{ loaded: HTMLImageElement }>();
 
   type FileInputChangeEvent = Event & { currentTarget: HTMLInputElement };
 
