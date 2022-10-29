@@ -6,10 +6,10 @@
   export let originalImage: HTMLImageElement;
 
   let canvas: HTMLCanvasElement;
-  let wipImage: HTMLImageElement;
 
   $: {
-    wipImage = originalImage;
+    // runs on...
+    originalImage;
 
     reset();
   }
@@ -23,13 +23,13 @@
       return;
     }
 
-    canvas.width = wipImage.width;
-    canvas.height = wipImage.height;
+    canvas.width = originalImage.width;
+    canvas.height = originalImage.height;
 
     const context = canvas.getContext("2d");
-    context.drawImage(wipImage, 0, 0);
+    context.drawImage(originalImage, 0, 0);
 
-    const estimation = await detector.estimateFaces(wipImage);
+    const estimation = await detector.estimateFaces(originalImage);
     console.log(estimation);
   };
 </script>
