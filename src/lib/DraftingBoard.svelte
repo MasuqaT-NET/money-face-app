@@ -80,6 +80,7 @@
     canvas.height = originalImage.height;
 
     const context = canvas.getContext("2d");
+    context.resetTransform();
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(originalImage, 0, 0);
 
