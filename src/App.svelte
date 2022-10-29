@@ -48,7 +48,10 @@
     {/each}
   </select>
 
-  <input type="color" bind:value={color} />
+  <input type="color" bind:value={signColor} />
+
+  <input type="range" bind:value={signSize} min="8" step="1" />
+  {signSize}px
 
   <Uploader on:loaded={loaded} />
 </main>

@@ -69,13 +69,14 @@
 
     const signSvg = svgHolder.querySelector("svg");
     const signPath = new Path2D(pathElement.getAttribute("d"));
-    const signSize = {
+    const signImageSize = {
       width: +signSvg.getAttribute("width"),
       height: +signSvg.getAttribute("height"),
     };
     const signConfig = {
-      size: signSize,
-      color,
+      size: { width: sign.size, height: sign.size },
+      imageSize: signImageSize,
+      color: sign.color,
       path: signPath,
     };
 

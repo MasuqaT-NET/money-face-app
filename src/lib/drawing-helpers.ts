@@ -44,16 +44,22 @@ export function drawSignAt(
   targetCenter: { x: number; y: number },
   signConfig: {
     size: { width: number; height: number };
+    imageSize: { width: number; height: number };
     color: string;
     path: Path2D;
   }
 ) {
+  const scaleX = signConfig.size.width / signConfig.imageSize.width;
+  const scaleY = signConfig.size.height / signConfig.imageSize.height;
+
   context.translate(
     targetCenter.x - signConfig.size.width / 2,
     targetCenter.y - signConfig.size.height / 2
   );
+  context.scale(scaleX, scaleY);
   context.fillStyle = signConfig.color;
   context.fill(signConfig.path);
+  context.scale(1 / scaleX, 1 / scaleY);
   context.translate(
     -(targetCenter.x - signConfig.size.width / 2),
     -(targetCenter.y - signConfig.size.height / 2)
