@@ -121,9 +121,20 @@
 
     return { x: xMin + (xMax - xMin) / 2, y: yMin + (yMax - yMin) / 2 };
   };
+
+  const handleShareClick = () => {
+    canvas.toBlob((blob) => {
+      const shareImage = new File([blob], "share.png", { type: "image/png" });
+
+      navigator.share({
+        files: [shareImage],
+      });
+    });
+  };
 </script>
 
 <div>
   <canvas bind:this={canvas} />
+  <button on:click={handleShareClick}>Share</button>
   <div bind:this={svgHolder} style="display: none" />
 </div>
