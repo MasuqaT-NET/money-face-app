@@ -6,8 +6,11 @@
   import Uploader from "./lib/Uploader.svelte";
   import DraftingBoard from "./lib/DraftingBoard.svelte";
   import { onMount } from "svelte";
+  import type { CurrencySign } from "./constants";
+  import { currencySigns } from "./constants.js";
 
   let originalImage: HTMLImageElement | null;
+  let currentSign: CurrencySign = "JPY";
 
   const loaded = (e: CustomEvent<HTMLImageElement>) => {
     originalImage = e.detail;
@@ -30,8 +33,14 @@
   <h1>money-face-app</h1>
 
   {#if originalImage}
-    <DraftingBoard {detector} {originalImage} />
+    <DraftingBoard {detector} {originalImage} sign={currentSign} />
   {/if}
+
+  <select bind:value={currentSign}>
+    {#each currencySigns as sign}
+      <option value={sign}>{sign}</option>
+    {/each}
+  </select>
 
   <Uploader on:loaded={loaded} />
 </main>

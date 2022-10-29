@@ -1,14 +1,13 @@
 <script lang="ts">
   import type { FaceLandmarksDetector } from "@tensorflow-models/face-landmarks-detection";
   import { onMount } from "svelte";
+  import type { CurrencySign } from "../constants";
 
   export let detector: FaceLandmarksDetector;
   export let originalImage: HTMLImageElement;
-
-  type CurrencySign = "BTC" | "EUR" | "JPY" | "USD";
+  export let sign: CurrencySign;
 
   let canvas: HTMLCanvasElement;
-  let currencySign: CurrencySign = "JPY";
 
   let svgHolder: HTMLElement;
   const fetchSign = async (sign: CurrencySign) => {
@@ -28,7 +27,8 @@
   }
 
   $: {
-    fetchSign(currencySign);
+    // noinspection JSUnusedAssignment
+    fetchSign(sign);
   }
 
   onMount(() => {
