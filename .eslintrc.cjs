@@ -22,4 +22,11 @@ module.exports = {
   settings: {
     "svelte3/typescript": true,
   },
+  globals: {
+    Image: "readonly",
+  },
+  rules: {
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+  },
 };

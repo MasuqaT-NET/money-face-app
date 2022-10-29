@@ -1,6 +1,31 @@
 <script lang="ts">
   import svelteLogo from "./assets/svelte.svg";
   import Counter from "./lib/Counter.svelte";
+  import Uploader from "./lib/Uploader.svelte";
+
+  let canvas: HTMLCanvasElement;
+  let originalImage: Image | null;
+  let wipImage: Image | null;
+
+  const resetWipImage = () => {
+    wipImage = originalImage;
+
+    refresh();
+  };
+
+  const refresh = () => {
+    canvas.width = wipImage.width;
+    canvas.height = wipImage.height;
+
+    const context = canvas.getContext("2d");
+    context.drawImage(wipImage, 0, 0);
+  };
+
+  const loaded = (e: CustomEvent<Image>) => {
+    originalImage = e.detail;
+
+    resetWipImage();
+  };
 </script>
 
 <main>
@@ -13,6 +38,10 @@
     </a>
   </div>
   <h1>Vite + Svelte</h1>
+
+  <canvas bind:this={canvas} style="max-width: 50vw" />
+
+  <Uploader on:loaded={loaded} />
 
   <div class="card">
     <Counter />
